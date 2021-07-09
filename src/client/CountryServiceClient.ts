@@ -4,8 +4,8 @@ import {
 } from '../generated/countryinfoservice';
 import { ServiceClient } from './ServiceClient';
 
-class CountryClient implements ServiceClient<CountryInfoServiceClient> {
-  private static instance: CountryClient;
+class CountryServiceClient implements ServiceClient<CountryInfoServiceClient> {
+  private static instance: CountryServiceClient;
   private service: CountryInfoServiceClient;
 
   private constructor() {}
@@ -14,8 +14,8 @@ class CountryClient implements ServiceClient<CountryInfoServiceClient> {
     this.service = await createClientAsync(wsdlUrl);
   }
 
-  public static get Instance(): CountryClient {
-    if (!this.instance) this.instance = new CountryClient();
+  public static get Instance(): CountryServiceClient {
+    if (!this.instance) this.instance = new CountryServiceClient();
     return this.instance;
   }
 
@@ -24,4 +24,4 @@ class CountryClient implements ServiceClient<CountryInfoServiceClient> {
   }
 }
 
-export { CountryClient };
+export { CountryServiceClient };

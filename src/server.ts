@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { CountryClient } from './client/CountryClient';
+import { CountryServiceClient } from './client/CountryServiceClient';
 
 import {
   CountryInfoServiceClient,
@@ -12,7 +12,7 @@ const port: number = 3001;
 
 server.get('/api/getAllCountryNames', async (req: Request, res: Response) => {
   const countryService: CountryInfoServiceClient =
-    CountryClient.Instance.Service;
+    CountryServiceClient.Instance.Service;
   try {
     const [result]: [result: ListOfCountryNamesByNameResponse, ...rest: any] =
       await countryService.ListOfCountryNamesByNameAsync({});
@@ -30,7 +30,7 @@ server.get('/api/getAllCountryNames', async (req: Request, res: Response) => {
 server.listen(port, async () => {
   console.log(`server started on port ${port}`);
 
-  const client: CountryClient = CountryClient.Instance;
+  const client: CountryServiceClient = CountryServiceClient.Instance;
   try {
     await client.setupServiceAsync('wsdl/CountryInfoService.wsdl');
     console.log('soap client setup successfully');
