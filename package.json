@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run build && node dist/server.js",
     "build": "tsc",
-    "generate-types": "wsdl-tsclient ./wsdl/CountryInfoService.wsdl -o ./src/types"
+    "generate-types": "wsdl-tsclient ./wsdl/CountryInfoService.wsdl -o ./src/generated"
   },
   "repository": {
     "type": "git",

@@ -1,33 +1,26 @@
 import express, { Request, Response } from 'express';
+import { createClientFactoryAsync } from './client-factory';
 
 import { SoapClient } from './client/soap-client';
 import {
   CountryInfoServiceClient,
   ListOfCountryNamesByNameResponse,
   TCountryCodeAndName
-} from './types/countryinfoservice';
+} from './generated/countryinfoservice';
 
 const server = express();
 const port: number = 3001;
 
-server.get('/api/getAllCountries', async (req: Request, res: Response) => {
+server.get('/api/getAllCountryNames', async (req: Request, res: Response) => {
   const soapClient: CountryInfoServiceClient =
-    SoapClient.getInstance().getClient()!;
+    SoapClient.getInstance<CountryInfoServiceClient>().Client;
 
   try {
-    const [result]: [
-      result: ListOfCountryNamesByNameResponse,
-      rawResponse: any,
-      soapHeader: any,
-      rawRequest: any
-    ] = await soapClient.ListOfCountryNamesByNameAsync(undefined);
+    const [result]: [result: ListOfCountryNamesByNameResponse, ...rest: any] =
+      await soapClient.ListOfCountryNamesByNameAsync({});
 
     const countryCodeAndName: TCountryCodeAndName[] =
       result.ListOfCountryNamesByNameResult.tCountryCodeAndName;
-
-    countryCodeAndName.forEach((value) => {
-      console.log(`value`, value);
-    });
 
     res.send(countryCodeAndName);
   } catch (error) {
@@ -37,12 +30,17 @@ server.get('/api/getAllCountries', async (req: Request, res: Response) => {
 });
 
 server.listen(port, async () => {
-  console.log(`server started at http://localhost:${port}`);
+  console.log(`server started on port ${port}`);
+
+  // const client: SoapClient<CountryInfoServiceClient> =
+  //   SoapClient.getInstance<CountryInfoServiceClient>();
   try {
-    const client: SoapClient = SoapClient.getInstance();
-    await client.setupClientAsync(
-      'http://webservices.oorsprong.org/websamples.countryinfo/CountryInfoService.wso?wsdl'
+    await createClientFactoryAsync<CountryInfoServiceClient>(
+      'wsdl/CountryInfoService.wsdl'
     );
+    // await client.setupClientAsync<CountryInfoServiceClient>(
+    //   'wsdl/CountryInfoService.wsdl'
+    // );
     console.log('soap client setup successfully');
   } catch (error) {
     console.log(`error`, error);

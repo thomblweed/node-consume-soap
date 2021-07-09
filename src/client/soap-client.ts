@@ -1,26 +1,21 @@
-// import * as soap from 'soap';
-// import { Client } from 'soap';
-import {
-  CountryInfoServiceClient,
-  createClientAsync
-} from '../types/countryinfoservice';
+import { createClientFactoryAsync } from '../client-factory';
 
-export class SoapClient {
-  private static INSTANCE: SoapClient;
-  private client: CountryInfoServiceClient | undefined;
+export class SoapClient<T> {
+  private static instance: any;
+  private client: any;
 
   private constructor() {}
 
   public async setupClientAsync<T>(wsdlUrl: string): Promise<void> {
-    this.client = await createClientAsync(wsdlUrl);
+    this.client = await createClientFactoryAsync<T>(wsdlUrl);
   }
 
-  public static getInstance(): SoapClient {
-    if (!this.INSTANCE) this.INSTANCE = new SoapClient();
-    return this.INSTANCE;
+  public static getInstance<T>(): SoapClient<T> {
+    if (!this.instance) this.instance = new SoapClient<T>();
+    return this.instance;
   }
 
-  public getClient(): CountryInfoServiceClient | undefined {
+  public get Client(): T {
     return this.client;
   }
 }
