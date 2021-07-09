@@ -7,9 +7,13 @@ import {
   TCountryCodeAndName
 } from '../../generated/countryinfoservice';
 
+interface CountryNames {
+  countryCodesAndNames: TCountryCodeAndName[];
+}
+
 const getAllCountryNames = async (
   req: Request,
-  res: Response
+  res: Response<CountryNames>
 ): Promise<void> => {
   const countryService: CountryInfoServiceClient =
     CountryServiceClient.Instance.Service!;
@@ -17,15 +21,12 @@ const getAllCountryNames = async (
     const [result]: [result: ListOfCountryNamesByNameResponse, ...rest: any] =
       await countryService.ListOfCountryNamesByNameAsync({});
 
-    const countryCodesAndNames: TCountryCodeAndName[] | undefined =
+    let countryCodesAndNames: TCountryCodeAndName[] | undefined =
       result.ListOfCountryNamesByNameResult?.tCountryCodeAndName;
-    if (!countryCodesAndNames) {
-      res.sendStatus(404);
-    }
-
-    res.send(countryCodesAndNames);
+    if (!countryCodesAndNames) countryCodesAndNames = [];
+    res.send({ countryCodesAndNames: countryCodesAndNames });
   } catch (error) {
-    console.log(`error`, error.toJSON());
+    console.log(`error`, error);
     res.sendStatus(500);
   }
 };
