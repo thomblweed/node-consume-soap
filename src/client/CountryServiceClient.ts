@@ -6,7 +6,7 @@ import { ServiceClient } from './ServiceClient';
 
 class CountryServiceClient implements ServiceClient<CountryInfoServiceClient> {
   private static instance: CountryServiceClient;
-  private service: CountryInfoServiceClient;
+  private service: CountryInfoServiceClient | undefined;
 
   private constructor() {}
 
@@ -19,7 +19,7 @@ class CountryServiceClient implements ServiceClient<CountryInfoServiceClient> {
     return this.instance;
   }
 
-  public get Service(): CountryInfoServiceClient {
+  public get Service(): CountryInfoServiceClient | undefined {
     return this.service;
   }
 }

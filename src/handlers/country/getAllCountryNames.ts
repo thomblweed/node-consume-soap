@@ -12,15 +12,18 @@ const getAllCountryNames = async (
   res: Response
 ): Promise<void> => {
   const countryService: CountryInfoServiceClient =
-    CountryServiceClient.Instance.Service;
+    CountryServiceClient.Instance.Service!;
   try {
     const [result]: [result: ListOfCountryNamesByNameResponse, ...rest: any] =
       await countryService.ListOfCountryNamesByNameAsync({});
 
-    const countryCodeAndName: TCountryCodeAndName[] =
-      result.ListOfCountryNamesByNameResult.tCountryCodeAndName;
+    const countryCodesAndNames: TCountryCodeAndName[] | undefined =
+      result.ListOfCountryNamesByNameResult?.tCountryCodeAndName;
+    if (!countryCodesAndNames) {
+      res.sendStatus(404);
+    }
 
-    res.send(countryCodeAndName);
+    res.send(countryCodesAndNames);
   } catch (error) {
     console.log(`error`, error.toJSON());
     res.sendStatus(500);
