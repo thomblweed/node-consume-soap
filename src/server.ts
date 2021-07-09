@@ -1,7 +1,6 @@
 import express, { Request, Response } from 'express';
-import { createClientFactoryAsync } from './client-factory';
+import { CountryClient } from './client/CountryClient';
 
-import { SoapClient } from './client/soap-client';
 import {
   CountryInfoServiceClient,
   ListOfCountryNamesByNameResponse,
@@ -12,12 +11,11 @@ const server = express();
 const port: number = 3001;
 
 server.get('/api/getAllCountryNames', async (req: Request, res: Response) => {
-  const soapClient: CountryInfoServiceClient =
-    SoapClient.getInstance<CountryInfoServiceClient>().Client;
-
+  const countryService: CountryInfoServiceClient =
+    CountryClient.Instance.Service;
   try {
     const [result]: [result: ListOfCountryNamesByNameResponse, ...rest: any] =
-      await soapClient.ListOfCountryNamesByNameAsync({});
+      await countryService.ListOfCountryNamesByNameAsync({});
 
     const countryCodeAndName: TCountryCodeAndName[] =
       result.ListOfCountryNamesByNameResult.tCountryCodeAndName;
@@ -32,15 +30,9 @@ server.get('/api/getAllCountryNames', async (req: Request, res: Response) => {
 server.listen(port, async () => {
   console.log(`server started on port ${port}`);
 
-  // const client: SoapClient<CountryInfoServiceClient> =
-  //   SoapClient.getInstance<CountryInfoServiceClient>();
+  const client: CountryClient = CountryClient.Instance;
   try {
-    await createClientFactoryAsync<CountryInfoServiceClient>(
-      'wsdl/CountryInfoService.wsdl'
-    );
-    // await client.setupClientAsync<CountryInfoServiceClient>(
-    //   'wsdl/CountryInfoService.wsdl'
-    // );
+    await client.setupServiceAsync('wsdl/CountryInfoService.wsdl');
     console.log('soap client setup successfully');
   } catch (error) {
     console.log(`error`, error);
